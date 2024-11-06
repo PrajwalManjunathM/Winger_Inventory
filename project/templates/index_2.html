@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Scanner Interface</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+        .navbar {
+            width: 100%;
+            background-color: #ffffff;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 10px 0;
+        }
+        .navbar img {
+            height: 50px; /* Adjust logo height as needed */
+        }
+        .container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+        }
+        .section {
+            flex: 1;
+            padding: 20px;
+            border: 1px solid #ddd;
+        }
+        .dropdown {
+            width: 100%;
+            padding: 10px;
+        }
+        .textarea {
+            width: 100%;
+            height: 150px;
+            padding: 10px;
+        }
+        .submit-button {
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+    <script src="https://unpkg.com/html5-qrcode/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <img src="C:\\Users\\A\\OneDrive\\Documents\\Winger Inventory\\project\\static\\your-logo-1.png" alt="Company Logo">
+    </div>
+
+    <div class="container">
+        <!-- Left Section -->
+        <div class="section">
+            <h3>Select Item</h3>
+            <select class="dropdown" id="itemDropdown">
+                <option value="ram">RAM</option>
+                <option value="mouse">Mouse</option>
+                <option value="keyboard">Keyboard</option>
+                <option value="monitor">Monitor</option>
+                <!-- Add more items as needed -->
+            </select>
+        </div>
+
+        <!-- Middle Section -->
+        <div class="section">
+            <h3>Scan QR/Barcode</h3>
+            <div id="scanner" style="width: 100%;"></div>
+            <input type="text" id="scannedText" placeholder="Scanned text will appear here" class="textarea">
+            <script>
+                // Initialize the QR/Barcode scanner
+                const html5QrCode = new Html5Qrcode("scanner");
+
+                function startScanning() {
+                    html5QrCode.start(
+                        { facingMode: "environment" },
+                        {
+                            fps: 10, // Frames per second for the scan
+                            qrbox: { width: 250, height: 250 }
+                        },
+                        (decodedText) => {
+                            // Display the scanned text and allow editing
+                            document.getElementById("scannedText").value = decodedText;
+                            html5QrCode.stop(); // Stop scanning after getting a result
+                        },
+                        (errorMessage) => {
+                            // Handle scan errors or missed scans (if needed)
+                            console.log("Scan error:", errorMessage);
+                        }
+                    ).catch(err => console.error("Error starting the scanner:", err));
+                }
+
+                // Start scanning when the page loads
+                window.onload = startScanning;
+            </script>
+        </div>
+
+        <!-- Right Section -->
+        <div class="section">
+            <h3>Add Comment</h3>
+            <textarea id="commentBox" class="textarea" placeholder="Enter your comment..."></textarea><br>
+            <button class="submit-button" onclick="submitData()">Submit</button>
+        </div>
+    </div>
+
+    <script>
+    function submitData() {
+        // Get the values of each field
+        const item = document.getElementById("itemDropdown").value;
+        const scannedText = document.getElementById("scannedText").value;
+        const comment = document.getElementById("commentBox").value;
+
+        // Check if any field is empty
+        if (!item || !scannedText || !comment) {
+            alert("Please fill out all fields before submitting.");
+            return; // Exit the function if any field is empty
+        }
+
+        // If all fields are filled, log the data to the console
+        console.log("Item:", item);
+        console.log("Scanned Text:", scannedText);
+        console.log("Comment:", comment);
+
+        alert("Data saved successfully!");
+    }
+    </script>
+</body>
+</html>
