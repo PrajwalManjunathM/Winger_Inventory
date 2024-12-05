@@ -1,0 +1,67 @@
+/* Basic Reset and Body Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #f1f1f1;
+}
+
+/* Row Styling */
+.row {
+    display: flex;
+    width: 100%;
+    margin: 10px 0;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Column and Full-width Styling */
+.col, .full-width {
+    flex: 1;
+    margin: 5px;
+    max-width: 33.33%; /* Default for columns */
+}
+
+.full-width {
+    max-width: 100%; /* Full width for single boxes */
+}
+
+/* Button Styling */
+.button-box {
+    background-color: rgb(32, 174, 243);
+    color: #f1f1f1;
+    padding: 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    font-size: 18px;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.button-box:hover {
+    background-color: rgb(73, 197, 255);
+    transform: scale(1.05);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .col, .full-width {
+        max-width: 100%; /* Stack elements vertically on small screens */
+    }
+
+    .button-box {
+        font-size: 16px;
+        padding: 15px;
+    }
+}

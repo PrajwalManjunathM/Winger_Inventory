@@ -1,0 +1,105 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #f1f1f1;
+}
+
+/* Header Styling */
+.navbar {
+    background-color: #ffffff;
+    padding: 15px;
+    text-align: center;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(32, 174, 243);
+}
+
+/* User Management Section */
+.user-management-container,
+.user-list-container,
+.edit-user-container {
+    background-color: #262626;
+    width: 100%;
+    max-width: 500px;
+    margin: 20px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+h2, h3 {
+    color: rgb(32, 174, 243);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    color: #f1f1f1;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid rgb(32, 174, 243);
+    background-color: #1a1a1a;
+    color: #f1f1f1;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+}
+
+.add-button {
+    background-color: rgb(32, 174, 243);
+    color: #1a1a1a;
+}
+
+.save-button {
+    background-color: #4caf50;
+    color: #fff;
+}
+
+.add-button:hover {
+    background-color: rgb(32, 174, 243);
+}
+
+.save-button:hover {
+    background-color: #45a049;
+}
+
+.user-item {
+    padding: 10px;
+    margin: 5px 0;
+    background-color: #333;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.user-item:hover {
+    background-color: #444;
+}

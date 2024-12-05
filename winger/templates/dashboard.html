@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="/static/dash_style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Navbar styles */
+        .navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            height: 60px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .navbar img {
+            height: 40px;
+        }
+
+        /* Layout styles */
+        .row-1 {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 100px; /* Add margin to avoid overlap with the navbar */
+        }
+
+        /* Layout styles */
+        .row {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .col {
+            flex: 1 1 calc(33.33% - 20px);
+            text-align: center;
+            margin: 10px;
+            max-width: 33.33%;
+        }
+
+        .full-width {
+            width: 90%;
+            margin: 10px auto;
+            text-align: center;
+            ax-width: 33.33%;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 768px) {
+            .col {
+                flex: 1 1 calc(50% - 20px);
+                max-width: 50%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .col {
+                flex: 1 1 100%;
+                max-width: 100%;
+            }
+
+            .button-box {
+                font-size: 16px;
+                padding: 15px;
+            }
+
+            .navbar {
+                height: 50px;
+            }
+
+            .navbar img {
+                height: 30px;
+            }
+
+            .row {
+                margin-top: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <img src="/static/logo.png" alt="Logo">
+    </div>
+
+    <!-- First Row -->
+    <div class="row-1">
+        <div class="col">
+            <a href="{% url 'inventory' %}">
+            <button  class="button-box">
+                Inventory<br>
+                Total Items: {{ total_items }}
+            </button>
+        </div>
+        <div class="col">
+            <a href="{% url 'rented' %}">
+            <button class="button-box">
+                Rented<br>
+                Total Items: {{ total_rented }}
+            </button>
+        </div>
+        <div class="col">
+            <a href="{% url 'sold' %}">
+            <button class="button-box">
+                Sold<br>
+                Total Items: {{ total_sold }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Second Row -->
+    <div class="row">
+        <div class="full-width">
+            <a href="{% url 'missing' %}">
+            <button class="button-box">
+                Missing Items<br>
+                Total Items: {{ missing_count }}
+            </button>
+        </div>
+    </div>
+
+    <!-- Third Row -->
+    <div class="row">
+        <div class="full-width">
+            <a href="{% url 'warranty' %}">
+            <button class="button-box">
+                Warranty Watch<br>
+                Total Items: {{ warranty_count }}
+            </button>
+        </div>
+    </div>
+</body>
+</html>

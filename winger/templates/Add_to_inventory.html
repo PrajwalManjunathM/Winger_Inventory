@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Inventory</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+<header>
+    <div class="logo"></div>
+    <a href="{% url 'home' %}">
+        <div><img src="/static/logo.png"></div>
+    </a>
+</header>
+
+<form method="POST" action="{% url 'add_to_inventory' %}" id="inventory-form" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="container">
+        <!-- Left Column for Dropdown -->
+        <div class="column">
+            <h3>Options</h3>
+            <div class="dropdown">
+                <select id="item-select" name="ritemname">
+                    <option value="">Select Item</option>
+                    <option value="RAM_Desktop">RAM Desktop</option>
+                    <option value="RAM_Laptop">RAM Laptop</option>
+                    <option value="RAM_Server">RAM Server</option>
+                    <option value="KEYBOARD">KEYBOARD</option>
+                    <option value="Mouse">Mouse</option>
+                    <option value="HDD_Laptop">HDD Laptop</option>
+                    <option value="HDD_Desktop">HDD Desktop</option>
+                    <option value="HDD_Server">HDD Server</option>
+                    <option value="Headphone">Headphone</option>
+                </select>
+            </div>
+
+            <h3>Specs</h3>
+            <textarea name="rspecs" placeholder="Specifications..." required></textarea>
+
+            <h3>Vendor Name</h3>
+            <textarea name="rvname" placeholder="Vendor name..." required></textarea>
+
+            <h3>Invoice Number</h3>
+            <textarea name="rinum" placeholder="Invoice number..." required></textarea>
+
+            <h3>Purchase Date</h3>
+            <input type="date" name="rpurchase_date" required>
+
+            <h3>Warranty in months</h3>
+            <textarea name="rwmon" placeholder="Warranty in months..." required></textarea>
+        </div>
+
+        <!-- Center Column for Camera Preview and Image Capture -->
+        <div class="column">
+            <h3>Camera</h3>
+            <button type="button" id="open-camera-btn" onclick="openCamera()">Open Camera</button>
+
+            <div id="camera-preview"></div>
+            <button type="button" id="capture-btn" onclick="captureAndSendImage()">Capture Image</button>
+            <input type="text" id="code-output" name="rcode" placeholder="Scanned Code" maxlength="30" />
+        </div>
+
+        <!-- Right Column for Comment and Submit Button -->
+        <div class="column">
+            <h3>Comments</h3>
+            <textarea name="rcomment" placeholder="Add a comment..." required></textarea>
+            <button type="submit" id="submit-btn">Submit</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    let videoStream;
+    const videoElement = document.createElement("video");
+
+    // Function to open the camera
+    function openCamera() {
+        const previewArea = document.getElementById("camera-preview");
+        navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }) // Use back camera
+            .then(stream => {
+                videoStream = stream;
+                videoElement.srcObject = stream;
+                videoElement.play();
+                videoElement.style.width = "100%"; // Ensure it fits the preview area
+                videoElement.style.height = "100%";
+                previewArea.innerHTML = "";
+                previewArea.appendChild(videoElement);
+            })
+            .catch(err => console.error("Error accessing camera: ", err));
+    }
+
+    // Function to capture image and send to server
+    async function captureAndSendImage() {
+        if (!videoStream) {
+            alert("Camera is not open. Please open the camera first.");
+            return;
+        }
+
+        const canvas = document.createElement("canvas");
+        canvas.width = videoElement.videoWidth;
+        canvas.height = videoElement.videoHeight;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+
+        // Convert the image to a Blob and send it via Fetch API
+        canvas.toBlob(async (blob) => {
+            const formData = new FormData();
+            formData.append("captured_image", blob);
+
+            try {
+                const response = await fetch("{% url 'add_to_inventory' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("code-output").value = data.s_code || "No code detected.";
+                } else {
+                    alert("Error processing image.");
+                }
+            } catch (error) {
+                console.error("Error sending image to server:", error);
+            }
+        }, "image/jpeg");
+    }
+</script>
+
+</body>
+</html>

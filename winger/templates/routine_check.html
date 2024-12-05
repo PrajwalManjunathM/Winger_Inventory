@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Inventory</title>
+    <link rel="stylesheet" href="/static/style.css">
+
+    <!-- Include the html5-qrcode library -->
+    <script src="https://cdn.jsdelivr.net/npm/html5-qrcode/minified/html5-qrcode.min.js"></script>
+</head>
+<body>
+
+<header>
+     <a href="{% url 'home' %}"> <div> <img src="/static/logo.png"></div></a>
+</header>
+
+<form method="POST" action="#" id="inventory-form">
+    <div class="container">
+        <!-- Center Column for Scan Buttons, Camera Preview, and Textbox -->
+        <div class="column" id="center-column">
+            <h3>Scan Options</h3>
+            <button type="button" id="qr-scan-btn" onclick="startQRCodeScanner()">Start QR Code Scan</button>
+            <button type="button" id="bar-scan-btn" onclick="startBarCodeScanner()">Start Barcode Scan</button>
+
+            <!-- Camera preview area -->
+            <div id="camera-preview"></div>
+
+            <!-- Input for scanned code -->
+            <input type="text" id="code-output" name="rcode" placeholder="Enter or Scan Code" maxlength="30" />
+
+            <!-- Button to add code from text field -->
+            <button type="button" id="add-code-btn" onclick="addCodeFromField()">Add to Scanned Items</button>
+        </div>
+
+        <!-- Scanned Items Section -->
+        <div id="result-section" class="column">
+            <h3>Scanned Items</h3>
+            <ul id="result-list">
+
+            </ul>
+        </div>
+
+        <!-- Right Column for Submit and Missing Items -->
+        <div class="column">
+            <h3>Missing Items</h3>
+            <ul id="missing-items-list">
+                <!-- Missing items will be populated here -->
+            </ul>
+            <button type="button" id="submit-btn" onclick="submitScannedItems()">Submit</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    let html5QrCode;
+
+    // Function to start QR Code scanning
+    function startQRCodeScanner() {
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("camera-preview");
+        }
+        html5QrCode.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 200 }
+            },
+            qrCodeMessage => {
+                document.getElementById("code-output").value = qrCodeMessage;
+                stopScanner();
+            },
+            errorMessage => {
+                console.log(errorMessage);
+            }
+        ).catch(err => {
+            console.error("Unable to start QR code scanner: ", err);
+        });
+    }
+
+    // Function to start Barcode scanning
+    function startBarCodeScanner() {
+        startQRCodeScanner(); // Reuse the same functionality
+    }
+
+    // Function to stop the scanner
+    function stopScanner() {
+        if (html5QrCode) {
+            html5QrCode.stop().then(ignore => {
+                html5QrCode.clear();
+            }).catch(err => {
+                console.error("Unable to stop the scanner.", err);
+            });
+        }
+    }
+
+    // Function to add the code from the text field to the Scanned Items section
+    function addCodeFromField() {
+        const codeField = document.getElementById("code-output");
+        const code = codeField.value.trim();
+
+        if (code) {
+            const resultList = document.getElementById("result-list");
+            const listItem = document.createElement("li");
+            listItem.textContent = code;
+            resultList.appendChild(listItem);
+
+            codeField.value = ''; // Clear the text field
+        } else {
+            alert("Please enter a code before adding.");
+        }
+    }
+
+    // Function to submit scanned items and fetch missing items
+    async function submitScannedItems() {
+        const items = [];
+        const listItems = document.querySelectorAll("#result-list li");
+        listItems.forEach(item => items.push(item.textContent));
+
+        const response = await fetch('/routine_check/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')  // Include CSRF token if using Django
+            },
+            body: JSON.stringify({ scanned_items: items })
+        });
+
+        if (response.ok) {
+            const missingItems = await response.json();
+            const missingList = document.getElementById("missing-items-list");
+            missingList.innerHTML = ''; // Clear previous data
+
+            for (const [code, details] of Object.entries(missingItems)) {
+                const listItem = document.createElement("li");
+                listItem.textContent = `${code}: ${details.item_name} (ID: ${details.item_id})`;
+                missingList.appendChild(listItem);
+            }
+        } else {
+            alert("Failed to submit scanned items.");
+        }
+    }
+
+    // Utility to get CSRF token (Django specific)
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+</script>
+
+</body>
+</html>

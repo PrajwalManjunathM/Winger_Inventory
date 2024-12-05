@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login Page</title>
+    <link rel="stylesheet" href="/static/login_style.css">
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="/static/logo.png" alt="Company Logo">
+        </div>
+    </header>
+    <main>
+        <div class="login-container">
+            <h2>Admin Login</h2>
+            <form method="POST" action="{% url 'admin_login' %}" id="login-form">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="user-id">User name:</label>
+                    <input type="text" id="user-id" name="user-id" placeholder="Enter your Admin ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="login-button">Login</button>
+                <button type="button" class="user-button" id="user-login">User Login</button>
+            </form>
+        </div>
+    </main>
+    <script>
+        // Admin Login Form Submission
+        document.getElementById("login-form").addEventListener("submit", async function (event) {
+            event.preventDefault(); // Prevent default form submission behavior
+    
+            const formData = new FormData(event.target); // Collect form data
+            const csrfToken = formData.get('csrfmiddlewaretoken'); // Extract CSRF token
+    
+            const formDataObject = new URLSearchParams(formData); // Convert to URL-encoded format
+    
+            console.log("Form submission triggered with data:", Object.fromEntries(formData.entries()));
+    
+            try {
+                const response = await fetch(event.target.action, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken,
+                    },
+                    body: formDataObject,
+                });
+    
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.authenticated) {
+                        console.log("Authentication successful. Redirecting to admin dashboard.");
+                        window.location.href = "{% url 'home_2' %}"; // Dynamic URL for admin dashboard
+                    } else {
+                        console.error("Authentication failed:", data.message);
+                        alert(data.message || "Invalid ID, password, or insufficient privileges. Please try again.");
+                    }
+                } else {
+                    console.error("Server error", response.status);
+                    alert("An error occurred. Please try again later.");
+                }
+            } catch (error) {
+                console.error("Error during login:", error);
+                alert("An error occurred while processing your request. Please try again later.");
+            }
+        });
+
+        // Redirect to User Login Page
+        document.getElementById("user-login").addEventListener("click", function() {
+            console.log("User Login clicked.");
+            window.location.href = "{% url 'user_login' %}"; // Dynamic URL for user login
+        });
+    </script>
+</body>
+</html>

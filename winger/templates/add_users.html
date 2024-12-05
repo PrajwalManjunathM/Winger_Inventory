@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="/static/add_users_style.css">
+</head>
+
+<body>
+    <header>
+        <nav class="navbar">
+            <div class="logo">Add Users</div>
+        </nav>
+    </header>
+    <main>
+        <div class="user-management-container">
+            <h2>Add Users</h2>
+            <form id="user-form" onsubmit="handleAddUser(event)">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label for="full-name">Full name:</label>
+                    <input type="text" id="user-full-name" name="full_name" placeholder="Enter full name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-name">User Name:</label>
+                    <input type="text" id="user-name" name="user_name" placeholder="Enter user name" required>
+                </div>
+                <div class="form-group">
+                    <label for="user-password">Password:</label>
+                    <input type="password" id="user-password" name="password" placeholder="Enter password" required>
+                </div>
+                <button type="submit" class="add-button">Add User</button>
+            </form>
+        </div>
+
+    </main>
+
+    <script>
+        // Handle form submission for adding a user
+        function handleAddUser(event) {
+            event.preventDefault(); // Prevent the default form submission
+
+            const fullName = document.getElementById('user-full-name').value.trim();
+            const userName = document.getElementById('user-name').value.trim();
+            const password = document.getElementById('user-password').value.trim();
+
+            if (fullName === "" || userName === "" || password === "") {
+                alert("All fields are required.");
+                return;
+            }
+
+            // Send the data via fetch to the backend
+            fetch('', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCSRFToken() // Include CSRF token
+                },
+                body: JSON.stringify({
+                    userName: userName,
+                    fullName: fullName,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    alert(data.message);
+                    renderUserList();
+                } else {
+                    alert(data.error || "Failed to add user.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error adding user.");
+            });
+
+            // Clear the input fields
+            document.getElementById('user-full-name').value = "";
+            document.getElementById('user-name').value = "";
+            document.getElementById('user-password').value = "";
+        }
+
+        // CSRF Token function for Django (if required)
+        function getCSRFToken() {
+            const cookies = document.cookie.split(';');
+            for (let cookie of cookies) {
+                if (cookie.trim().startsWith('csrftoken=')) {
+                    return cookie.split('=')[1];
+                }
+            }
+            return '';
+        }
+
+        // User data store
+        let users = [];
+        let editingIndex = -1;
+
+        // Render the user list in a separate section
+        function renderUserList() {
+            const userList = document.getElementById('user-list');
+            userList.innerHTML = ""; // Clear current list
+
+            users.forEach((user, index) => {
+                const listItem = document.createElement('li');
+                listItem.textContent = `${user.fullName} (${user.userName})`;
+                listItem.className = "user-item";
+                listItem.setAttribute("data-index", index);
+                listItem.onclick = () => editUser(index);
+                userList.appendChild(listItem);
+            });
+        }
+
+        // Edit a user
+        function editUser(index) {
+            editingIndex = index;
+            const user = users[index];
+
+            // Populate edit form with user details
+            document.getElementById('edit-user-id').value = user.userName;
+            document.getElementById('edit-user-password').value = user.password;
+
+            // Show the edit form
+            document.getElementById('edit-user-container').style.display = "block";
+        }
+
+        // Save user changes
+        function saveUser() {
+            const userIdInput = document.getElementById('edit-user-id');
+            const passwordInput = document.getElementById('edit-user-password');
+
+            const userName = userIdInput.value.trim();
+            const password = passwordInput.value.trim();
+
+            if (userName === "" || password === "") {
+                alert("Both fields are required.");
+                return;
+            }
+
+            // Update the user in the array
+            users[editingIndex].userName = userName;
+            users[editingIndex].password = password;
+            renderUserList();
+
+            // Hide the edit form and reset index
+            document.getElementById('edit-user-container').style.display = "none";
+            editingIndex = -1;
+        }
+    </script>
+</body>
+</html>

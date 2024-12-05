@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <link rel="stylesheet" href="/static/home_style.css">
+</head>
+<body>
+    <header>
+        <nav> 
+            <img src="/static/logo.png" alt="Company Logo" class="header-logo"> <!-- Replace with your logo path -->
+        </nav>
+    </header>
+    <main>
+        <div class="home-container">
+            <a href="{% url 'rent' %}" class="nav-button">Rent</a>
+            <a href="{% url 'sell' %}" class="nav-button">Sell</a>
+            <a href="{% url 'add_to_inventory' %}" class="nav-button">Add to Inventory</a>
+            <a href="{% url 'retrieve' %}" class="nav-button">Retrieve</a>
+            <a href="{% url 'routine_check' %}" class="nav-button">Physical verification</a>
+            <a href="{% url 'item_history' %}" class="nav-button">Item History</a>
+            <a href="{% url 'add_users' %}" class="nav-button">Add users</a>
+            <a href="{% url 'dashboard' %}" class="nav-button">Dashboard</a>
+        </div>
+    </main>
+</body>
+</html>

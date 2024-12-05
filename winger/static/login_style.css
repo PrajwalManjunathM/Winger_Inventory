@@ -1,0 +1,138 @@
+/* Basic Reset and Body Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+/* Header Styling */
+header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #ffffff;
+}
+
+header img {
+    height: 50px;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    color: rgb(32, 174, 243); /* Orange contrast color */
+}
+
+/* Login Container Styling */
+.login-container {
+    background-color: #262626;
+    width: 100%;
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    text-align: center;
+}
+
+.login-container h2 {
+    color: rgb(32, 174, 243);
+    margin-bottom: 20px;
+}
+
+/* Form Styling */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.form-group label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+    color: #ffffff;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid rgb(32, 174, 243);
+    background-color: #1a1a1a;
+    color: #f1f1f1;
+}
+
+/* Button Styling */
+button {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-bottom: 10px;
+}
+
+.login-button {
+    background-color: rgb(32, 174, 243);
+    color: #1a1a1a;
+}
+
+.login-button:hover {
+    background-color: rgb(73, 197, 255);
+}
+
+.user-button {
+    background-color: #555;
+    color: #f1f1f1;
+}
+
+.admin-button:hover {
+    background-color: #333;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .login-container {
+        width: 90%;
+        padding: 15px;
+    }
+    .home-container {
+        padding: 20px;
+    }
+
+    .nav-button {
+        font-size: 16px;
+        padding: 15px;
+    }
+}
+
+
+.nav-button {
+    width: 80%;
+    max-width: 400px;
+    padding: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    background-color: rgb(32, 174, 243);
+    color: #1a1a1a;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.nav-button:hover {
+    background-color: rgb(73, 197, 255);
+    transform: scale(1.05);
+}

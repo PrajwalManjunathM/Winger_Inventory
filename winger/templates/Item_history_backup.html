@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Check</title>
+    <style>
+        .history-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px 0;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .history-box div {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Check History</h2>
+
+    <!-- Input box to enter the code -->
+    <input type="text" id="codeInput" placeholder="Enter code to check history">
+    <button id="checkHistoryBtn">Check History</button>
+
+    <div id="historyContainer">
+        <!-- History records will be displayed here -->
+    </div>
+
+    <script>
+        document.getElementById("checkHistoryBtn").addEventListener("click", function() {
+            // Get the code entered by the user
+            const code = document.getElementById("codeInput").value;
+
+            // Check if the input is not empty
+            if (code.trim() !== "") {
+                fetch(`/item_history/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ code: code })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Clear previous history
+                    const historyContainer = document.getElementById("historyContainer");
+                    historyContainer.innerHTML = "";
+
+                    // Display the history
+                    if (Array.isArray(data)) {
+                        data.forEach(item => {
+                            const historyBox = document.createElement("div");
+                            historyBox.classList.add("history-box");
+
+                            Object.entries(item).forEach(([key, value]) => {
+                                const historyItem = document.createElement("div");
+                                historyItem.innerHTML = `<strong>${key}:</strong> ${value}`;
+                                historyBox.appendChild(historyItem);
+                            });
+
+                            historyContainer.appendChild(historyBox);
+                        });
+                    } else {
+                        historyContainer.innerHTML = "No history found.";
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+            } else {
+                alert("Please enter a code.");
+            }
+        });
+    </script>
+</body>
+</html>

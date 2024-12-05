@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Missing Management</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: #333;
+            background-color: #fff;
+        }
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            background-color: rgb(32, 174, 243);
+            color: white;
+            font-weight: bold;
+        }
+        .container {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        .column {
+            background-color: #f9f9f9;
+            padding: 10px;
+            width: 100%;
+            color: #333;
+        }
+        h3 {
+            color: rgb(32, 174, 243);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background-color: #fff;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+            color: #333;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: #000;
+        }
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+        .btn-download {
+            padding: 8px 15px;
+            background-color: white;
+            color: rgb(32, 174, 243);
+            border: 1px solid white;
+            cursor: pointer;
+            font-size: 14px;
+            border-radius: 5px;
+        }
+        .btn-download:hover {
+            background-color: rgb(25, 138, 194);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>Missing Management</div>
+        <button class="btn-download" onclick="downloadPDF()">Download Table as PDF</button>
+    </header>
+    <div class="container">
+        <div class="column">
+            <h3>Missed Items</h3>
+            <table id="itemsTable">
+                <thead>
+                    <tr>
+                        <th>Item ID</th>
+                        <th>Current Status</th>
+                        <th>Action Date</th>
+                        <th>User ID Checked</th>
+                        <th>Item Name</th>
+                        <th>Scanned Code</th>
+                        <th>Last Action User ID</th>
+                        <th>Last Action User Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in items %}
+                    <tr>
+                        <td>{{ item.item_id }}</td>
+                        <td>{{ item.current_status }}</td>
+                        <td>{{ item.action_date }}</td>
+                        <td>{{ item.user_id_checked }}</td>
+                        <td>{{ item.item_name }}</td>
+                        <td>{{ item.scanned_code }}</td>
+                        <td>{{ item.last_action_user_id }}</td>
+                        <td>{{ item.last_action_user_name }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+        async function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+
+            // Capture the table element
+            const table = document.getElementById("itemsTable");
+            const canvas = await html2canvas(table, { scale: 2 });
+            
+            // Convert canvas to an image
+            const imgData = canvas.toDataURL("image/png");
+
+            // Create a PDF
+            const pdf = new jsPDF("p", "mm", "a4");
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
+            pdf.save("Missed_Items.pdf");
+        }
+    </script>
+</body>
+</html>
